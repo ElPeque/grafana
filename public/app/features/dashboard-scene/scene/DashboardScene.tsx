@@ -258,7 +258,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
     this.state.body.editModeChanged?.(true);
 
     // Propagate edit mode to scopes
-    this.state.scopesBridge?.enterReadOnly();
+    this.state.scopesBridge?.enableReadOnly();
 
     this._changeTracker.startTrackingChanges();
   };
@@ -295,7 +295,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     if (!this.state.isDirty || skipConfirm) {
       this.exitEditModeConfirmed(restoreInitialState || this.state.isDirty);
-      this.state.scopesBridge?.exitReadOnly();
+      this.state.scopesBridge?.disableReadOnly();
       return;
     }
 
@@ -307,7 +307,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
         yesText: 'Discard',
         onConfirm: () => {
           this.exitEditModeConfirmed();
-          this.state.scopesBridge?.exitReadOnly();
+          this.state.scopesBridge?.disableReadOnly();
         },
       })
     );
