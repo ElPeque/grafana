@@ -190,7 +190,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
   }
 
   private _activationHandler() {
-    this.state.scopesBridge?.enable();
+    this.state.scopesBridge?.setEnabled(true);
 
     let prevSceneContext = window.__grafanaSceneContext;
     const isNew = locationService.getLocation().pathname === '/dashboard/new';
@@ -224,7 +224,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     // Deactivation logic
     return () => {
-      this.state.scopesBridge?.disable();
+      this.state.scopesBridge?.setEnabled(false);
       window.__grafanaSceneContext = prevSceneContext;
       clearKeyBindings();
       this._changeTracker.terminate();
@@ -258,7 +258,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
     this.state.body.editModeChanged?.(true);
 
     // Propagate edit mode to scopes
-    this.state.scopesBridge?.enableReadOnly();
+    this.state.scopesBridge?.setReadOnly(true);
 
     this._changeTracker.startTrackingChanges();
   };
@@ -295,7 +295,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     if (!this.state.isDirty || skipConfirm) {
       this.exitEditModeConfirmed(restoreInitialState || this.state.isDirty);
-      this.state.scopesBridge?.disableReadOnly();
+      this.state.scopesBridge?.setReadOnly(false);
       return;
     }
 
@@ -307,7 +307,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
         yesText: 'Discard',
         onConfirm: () => {
           this.exitEditModeConfirmed();
-          this.state.scopesBridge?.disableReadOnly();
+          this.state.scopesBridge?.setReadOnly(false);
         },
       })
     );
