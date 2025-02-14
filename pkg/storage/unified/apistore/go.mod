@@ -398,6 +398,7 @@ require (
 	k8s.io/component-base v0.32.1 // indirect
 	k8s.io/kms v0.32.1 // indirect
 	k8s.io/kube-aggregator v0.32.0 // indirect
+	k8s.io/klog v1.0.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect

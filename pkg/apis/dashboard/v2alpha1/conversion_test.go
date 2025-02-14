@@ -52,18 +52,18 @@ func TestConvertDashboardVersions(t *testing.T) {
 	require.NoError(t, err)
 
 	// TODO (@radiohead): un-comment this once we have the conversion code.
-	//
-	// // convert v0 to v2, where we should extract the title & all other elements should be copied
-	// result := DashboardSpec{}
-	// err = Convert_v0alpha1_Unstructured_To_v2alpha1_DashboardSpec(&object, &result, nil)
-	// require.NoError(t, err)
-	// require.Equal(t, result.Title, "New dashboard")
+
+	// convert v0 to v2, where we should extract the title & all other elements should be copied
+	result := DashboardSpec{}
+	err = Convert_v0alpha1_Unstructured_To_v2alpha1_DashboardSpec(&object, &result, nil)
+	require.NoError(t, err)
+	require.Equal(t, result.Title, "New dashboard")
 	// require.Equal(t, result.Unstructured, object)
 	// require.Equal(t, result.Unstructured.Object["refresh"], "", "schemaVersion migration not applied. refresh should be an empty string")
 
-	// // now convert back & ensure it is the same
-	// object2 := common.Unstructured{}
-	// err = Convert_v2alpha1_DashboardSpec_To_v0alpha1_Unstructured(&result, &object2, nil)
-	// require.NoError(t, err)
-	// require.Equal(t, object, object2)
+	// now convert back & ensure it is the same
+	object2 := common.Unstructured{}
+	err = Convert_v2alpha1_DashboardSpec_To_v0alpha1_Unstructured(&result, &object2, nil)
+	require.NoError(t, err)
+	require.Equal(t, object, object2)
 }
