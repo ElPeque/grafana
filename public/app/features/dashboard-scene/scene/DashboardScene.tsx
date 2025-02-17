@@ -200,6 +200,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
     this._initializePanelSearch();
 
     if (this.state.isEditing) {
+      this.state.scopesBridge?.setReadOnly(true);
       this._initialUrlState = locationService.getLocation();
       this._changeTracker.startTrackingChanges();
     }
@@ -224,6 +225,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     // Deactivation logic
     return () => {
+      this.state.scopesBridge?.setReadOnly(false);
       this.state.scopesBridge?.setEnabled(false);
       window.__grafanaSceneContext = prevSceneContext;
       clearKeyBindings();
