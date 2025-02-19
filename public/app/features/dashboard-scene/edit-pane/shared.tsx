@@ -1,6 +1,7 @@
 import { useSessionStorage } from 'react-use';
 
 import { Dropdown, Button, IconButton, Stack, Icon, Menu } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 export function useEditPaneCollapsed() {
   return useSessionStorage('grafana.dashboards.edit-pane.isCollapsed', false);
@@ -21,13 +22,25 @@ export const renderTitle = ({ title, onDelete, onCopy, onDuplicate }: RenderTitl
       <Stack alignItems="center">
         {addCopyOrDuplicate ? (
           <Dropdown overlay={<MenuItems onCopy={onCopy} onDuplicate={onDuplicate} />}>
-            <Button tooltip="Copy or Duplicate" tooltipPlacement="bottom" variant="secondary" fill="text" size="md">
+            <Button
+              tooltip={t('dashboard.layout.common.copy-or-duplicate', 'Copy or Duplicate')}
+              tooltipPlacement="bottom"
+              variant="secondary"
+              fill="text"
+              size="md"
+            >
               <Icon name="copy" /> <Icon name="angle-down" />
             </Button>
           </Dropdown>
         ) : null}
 
-        <IconButton size="md" variant="secondary" onClick={onDelete} name="trash-alt" tooltip="Delete" />
+        <IconButton
+          size="md"
+          variant="secondary"
+          onClick={onDelete}
+          name="trash-alt"
+          tooltip={t('dashboard.layout.common.delete', 'Delete')}
+        />
       </Stack>
     </Stack>
   );
@@ -41,8 +54,10 @@ type MenuItemsProps = {
 const MenuItems = ({ onCopy, onDuplicate }: MenuItemsProps) => {
   return (
     <Menu>
-      {onCopy ? <Menu.Item label="Copy" onClick={onCopy} /> : null}
-      {onDuplicate ? <Menu.Item label="Duplicate" onClick={onDuplicate} /> : null}
+      {onCopy ? <Menu.Item label={t('dashboard.layout.common.copy', 'Copy')} onClick={onCopy} /> : null}
+      {onDuplicate ? (
+        <Menu.Item label={t('dashboard.layout.common.duplicate', 'Duplicate')} onClick={onDuplicate} />
+      ) : null}
     </Menu>
   );
 };

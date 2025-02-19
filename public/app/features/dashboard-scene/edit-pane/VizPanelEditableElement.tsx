@@ -1,13 +1,12 @@
 import { css, cx } from '@emotion/css';
 import { useMemo } from 'react';
 
-import { GrafanaTheme2 } from '@grafana/data';
-import { sceneGraph, VizPanel } from '@grafana/scenes';
+import { GrafanaTheme2, textUtil } from '@grafana/data';
+import { VizPanel } from '@grafana/scenes';
 import { useStyles2, Text, Icon, Stack, Tooltip } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
 import { OptionsPaneCategoryDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneCategoryDescriptor';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
-import { getVisualizationOptions2 } from 'app/features/dashboard/components/PanelEditor/getVisualizationOptions';
 
 import {
   PanelBackgroundSwitch,
@@ -88,32 +87,10 @@ export class VizPanelEditableElement implements EditableDashboardElement, BulkAc
       return undefined;
     }, [layoutElement]);
 
-    const { options, fieldConfig, _pluginInstanceState } = panel.useState();
-    const dataProvider = sceneGraph.getData(panel);
-    const { data } = dataProvider.useState();
-
-    const visualizationOptions = useMemo(() => {
-      const plugin = panel.getPlugin();
-      if (!plugin) {
-        return [];
-      }
-
-      return getVisualizationOptions2({
-        panel,
-        data,
-        plugin: plugin,
-        eventBus: panel.getPanelContext().eventBus,
-        instanceState: _pluginInstanceState,
-      });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, panel, options, fieldConfig, _pluginInstanceState]);
-
     const categories = [panelOptions];
     if (layoutCategory) {
       categories.push(layoutCategory);
     }
-
-    categories.push(...visualizationOptions);
 
     return categories;
   }
@@ -165,7 +142,7 @@ const OpenPanelEditViz = ({ model }: OpenPanelEditVizProps) => {
         {plugin ? (
           <Tooltip content="Open Panel Edit">
             <a
-              href={getEditPanelUrl(getPanelIdForVizPanel(model.getPanel()))}
+              href={textUtil.sanitizeUrl(getEditPanelUrl(getPanelIdForVizPanel(model.getPanel())))}
               className={cx(styles.pluginDescriptionWrapper)}
               onClick={() => {}}
             >

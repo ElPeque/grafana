@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
-import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
-import { Alert, Input, RadioButtonGroup, Switch, TextLink } from '@grafana/ui';
+import { Alert, Input, Switch, TextLink } from '@grafana/ui';
 import { t, Trans } from 'app/core/internationalization';
 import { OptionsPaneCategoryDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneCategoryDescriptor';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
@@ -41,28 +40,22 @@ export function getEditOptions(model: RowItem): OptionsPaneCategoryDescriptor[] 
       )
       .addItem(
         new OptionsPaneItemDescriptor({
-          title: t('dashboard.rows-layout.row-options.height.title', 'Height'),
-          render: () => <RowHeightSelect row={model} />,
+          title: t('dashboard.layout.common.layout', 'Layout'),
+          render: function renderTitle() {
+            return <DashboardLayoutSelector layoutManager={layout} />;
+          },
+        })
+      )
+      .addItem(
+        new OptionsPaneItemDescriptor({
+          title: t('dashboard.rows-layout.row-options.repeat.variable.title', 'Repeat for'),
+          render: () => <RowRepeatSelect row={model} dashboard={dashboard} />,
         })
       )
       .addItem(
         new OptionsPaneItemDescriptor({
           title: t('dashboard.rows-layout.row-options.height.hide-row-header', 'Hide row header'),
           render: () => <RowHeaderSwitch row={model} />,
-        })
-      )
-      .addItem(
-        new OptionsPaneItemDescriptor({
-          title: t('dashboard.rows-layout.row-options.repeat.variable.title', 'Variable'),
-          render: () => <RowRepeatSelect row={model} dashboard={dashboard} />,
-        })
-      )
-      .addItem(
-        new OptionsPaneItemDescriptor({
-          title: 'Layout',
-          render: function renderTitle() {
-            return <DashboardLayoutSelector layoutManager={layout} />;
-          },
         })
       );
   }, [layout, model]);
@@ -79,24 +72,19 @@ export function renderActions(model: RowItem) {
 function RowTitleInput({ row }: { row: RowItem }) {
   const { title } = row.useState();
 
-  return <Input title="Title" value={title} onChange={(e) => row.onChangeTitle(e.currentTarget.value)} />;
+  return (
+    <Input
+      title={t('dashboard.rows-layout.row-options.title-option', 'Title')}
+      value={title}
+      onChange={(e) => row.onChangeTitle(e.currentTarget.value)}
+    />
+  );
 }
 
 function RowHeaderSwitch({ row }: { row: RowItem }) {
   const { isHeaderHidden = false } = row.useState();
 
   return <Switch value={isHeaderHidden} onChange={() => row.onHeaderHiddenToggle()} />;
-}
-
-function RowHeightSelect({ row }: { row: RowItem }) {
-  const { height = 'expand' } = row.useState();
-
-  const options: Array<SelectableValue<'expand' | 'min'>> = [
-    { label: t('dashboard.rows-layout.row-options.height.expand', 'Expand'), value: 'expand' },
-    { label: t('dashboard.rows-layout.row-options.height.min', 'Min'), value: 'min' },
-  ];
-
-  return <RadioButtonGroup options={options} value={height} onChange={(option) => row.onChangeHeight(option)} />;
 }
 
 function RowRepeatSelect({ row, dashboard }: { row: RowItem; dashboard: DashboardScene }) {
