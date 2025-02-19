@@ -26,6 +26,7 @@ export class DashboardEditableElement implements EditableDashboardElement {
         title: t('dashboard.options.title', 'Dashboard options'),
         id: 'dashboard-options',
         isOpenDefault: true,
+        alwaysExpanded: true,
       })
         .addItem(
           new OptionsPaneItemDescriptor({
