@@ -31,11 +31,11 @@ func ProvideOpenFeatureManager(cfg *setting.Cfg) (*OpenFeatureManager, error) {
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create feature provider: %w", err, "provider", provType)
+		return nil, fmt.Errorf("failed to create %s feature provider: %w", provType, err)
 	}
 
 	if err := openfeature.SetProviderAndWait(provider); err != nil {
-		return nil, fmt.Errorf("failed to set global feature provider: %w", err, "provider", provType)
+		return nil, fmt.Errorf("failed to set global %s feature provider: %w", provType, err)
 	}
 
 	// TODO: Is targeting key needed here?
