@@ -132,7 +132,7 @@ func RunCmd() int {
 }
 
 func yarn(params ...string) {
-	runPrint(`yarn run`, params...)
+	runPrint(`yarn`, append([]string{`run`}, params...)...)
 }
 
 func genPackageVersion(version string, iteration string) string {

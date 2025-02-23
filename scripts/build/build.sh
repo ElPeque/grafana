@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "DEBUG: PATH=$PATH"
+which yarn || echo "DEBUG: Yarn not found"
+
+
 # shellcheck disable=SC2086
 
 #
@@ -13,7 +17,7 @@ CCARMV7=arm-linux-gnueabihf-gcc
 CCARMV7_MUSL=/tmp/arm-linux-musleabihf-cross/bin/arm-linux-musleabihf-gcc
 CCARM64=aarch64-linux-gnu-gcc
 CCARM64_MUSL=/tmp/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc
-CCX64=/tmp/x86_64-centos6-linux-gnu/bin/x86_64-centos6-linux-gnu-gcc
+CCX64=gcc
 CCX64_MUSL=/tmp/x86_64-linux-musl-cross/bin/x86_64-linux-musl-gcc
 
 BUILD_FAST=0
@@ -56,15 +60,15 @@ done
 # shellcheck disable=SC2124
 EXTRA_OPTS="$@"
 
-cd /go/src/github.com/grafana/grafana
+cd /home/alejandro/go/src/github.com/ElPeque/grafana
 echo "current dir: $(pwd)"
 
 if [ "$CIRCLE_TAG" != "" ]; then
   echo "Building releases from tag $CIRCLE_TAG"
-  OPT="-includeBuildId=false ${EXTRA_OPTS}"
+  OPT="-includeBuildID=false ${EXTRA_OPTS}"
 else
   echo "Building incremental build for $CIRCLE_BRANCH"
-  OPT="-buildId=${CIRCLE_WORKFLOW_ID} ${EXTRA_OPTS}"
+  OPT="-buildID=${CIRCLE_WORKFLOW_ID} ${EXTRA_OPTS}"
 fi
 
 
@@ -76,7 +80,6 @@ function build_backend_linux_amd64() {
     mkdir dist
   fi
   CC=${CCX64} go run build.go ${OPT} build
-  CC=${CCX64_MUSL} go run build.go -libc musl ${OPT} build
 }
 
 function build_backend() {
@@ -84,11 +87,7 @@ function build_backend() {
     mkdir dist
   fi
 
-  go run build.go -goarch armv6 -cc ${CCARMV6} ${OPT} build
-  go run build.go -goarch armv7 -cc ${CCARMV7} ${OPT} build
   go run build.go -goarch arm64 -cc ${CCARM64} ${OPT} build
-  go run build.go -goarch armv7 -libc musl -cc ${CCARMV7_MUSL} ${OPT} build
-  go run build.go -goarch arm64 -libc musl -cc ${CCARM64_MUSL} ${OPT} build
   build_backend_linux_amd64
 }
 
@@ -109,18 +108,13 @@ function build_frontend() {
 function package_linux_amd64() {
   echo "Packaging Linux AMD64"
   go run build.go -goos linux -pkg-arch amd64 ${OPT} package-only
-  go run build.go -goos linux -pkg-arch amd64 ${OPT} -libc musl -skipRpm -skipDeb package-only
   go run build.go latest
   echo "PACKAGE LINUX AMD64: finished"
 }
 
 function package_all() {
   echo "Packaging ALL"
-  go run build.go -goos linux -pkg-arch armv6 ${OPT} -skipRpm package-only
-  go run build.go -goos linux -pkg-arch armv7 ${OPT} package-only
   go run build.go -goos linux -pkg-arch arm64 ${OPT} package-only
-  go run build.go -goos linux -pkg-arch armv7 -libc musl -skipRpm -skipDeb ${OPT} package-only
-  go run build.go -goos linux -pkg-arch arm64 -libc musl -skipRpm -skipDeb ${OPT} package-only
   package_linux_amd64
   echo "PACKAGE ALL: finished"
 }
@@ -134,7 +128,7 @@ function package_setup() {
   go run build.go -gen-version ${OPT} > dist/grafana.version
   # Load ruby, needed for packing with fpm
   # shellcheck disable=SC1091
-  source /etc/profile.d/rvm.sh
+  source /usr/local/rvm/scripts/rvm
 }
 
 if [ $BUILD_FAST = "0" ]; then
