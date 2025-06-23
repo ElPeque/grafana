@@ -215,31 +215,14 @@ export class AppChromeService {
   };
 
   public onToggleKioskMode = () => {
-    const nextMode = this.getNextKioskMode();
-    this.update({ kioskMode: nextMode });
-    locationService.partial({ kiosk: this.getKioskUrlValue(nextMode) });
-    reportInteraction('grafana_kiosk_mode', {
-      action: 'toggle',
-      mode: nextMode,
-    });
   };
 
   public exitKioskMode() {
-    this.update({ kioskMode: undefined });
-    locationService.partial({ kiosk: null });
-    reportInteraction('grafana_kiosk_mode', {
-      action: 'exit',
-    });
   }
 
   public setKioskModeFromUrl(kiosk: UrlQueryValue) {
     let newKioskMode: KioskMode | undefined;
-
-    switch (kiosk) {
-      case '1':
-      case true:
-        newKioskMode = KioskMode.Full;
-    }
+    newKioskMode = KioskMode.Full;
 
     if (newKioskMode && newKioskMode !== this.state.getValue().kioskMode) {
       this.update({ kioskMode: newKioskMode });
@@ -247,18 +230,9 @@ export class AppChromeService {
   }
 
   public getKioskUrlValue(mode: KioskMode | null) {
-    switch (mode) {
-      case KioskMode.Full:
-        return true;
-      default:
-        return null;
-    }
+    return true;
   }
 
-  private getNextKioskMode() {
-    appEvents.emit(AppEvents.alertInfo, [t('navigation.kiosk.tv-alert', 'Press ESC to exit kiosk mode')]);
-    return KioskMode.Full;
-  }
 }
 
 /**
